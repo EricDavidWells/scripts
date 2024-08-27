@@ -2,6 +2,7 @@ import argparse
 import os
 import re
 import shutil
+import subprocess
 
 def parse_arguments():
     # Create the parser
@@ -49,13 +50,21 @@ if __name__ == "__main__":
             file_path = os.path.join(root, file)
             if not video_pattern.search(file_path): continue
 
-            date = date_pattern.search(root)
+            result = subprocess.run(
+                [f"ffprobe -v quiet -select_streams v:0  -show_entries stream_tags=creation_time -of default=noprint_wrappers=1:nokey=1 {file_path}"], 
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True, shell=True)
+
+            date = date_pattern.search(result.stdout)
             if not date: continue
 
             if args.extra_regex:
                 if not extra_pattern.search(file_path): continue
 
             out_file_path = os.path.join(args.output_dir, date[0] + "_" + file)
+
+            if os.path.exists(out_file_path): continue
 
             print(f"copying {file_path} to {out_file_path}")
             shutil.copyfile(file_path, out_file_path)

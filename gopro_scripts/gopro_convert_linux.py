@@ -14,6 +14,7 @@ def parse_arguments():
         type=str, 
         help='The source directory'
     )
+    parser.add_argument('--rewrite-existing', action='store_true')
 
     # Parse the arguments
     return parser.parse_args()
@@ -35,9 +36,8 @@ if __name__ == "__main__":
 
             file_root, file_ext = os.path.splitext(file_path)
             output_path = os.path.join(root, f"{file_root}.mov")
-            if os.path.exists(output_path): continue
+            if os.path.exists(output_path) and not args.rewrite_existing: continue
 
-            # print(f"ffmpeg -i {file_path} -c:v mpeg4 -c:a pcm_s16le {output_path}")
+            
 
-            subprocess.call([f"ffmpeg -i {file_path} -c:v mpeg4 -c:a pcm_s16le {output_path}"], shell=True)
-
+            subprocess.call([f"ffmpeg -i {file_path} -c:v mpeg4 -q:v 1 -c:a pcm_s16le {output_path} {'-y' if args.rewrite_existing else ''}"], shell=True)
