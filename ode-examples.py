@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 # generic mass spring damper simulation
 def mass_spring_damper_example():
     k = 3
-    c = 2
+    c = 0
     m = 1
 
     wn = (k/m)**0.5
