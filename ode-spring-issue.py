@@ -3,17 +3,16 @@ import matplotlib.pyplot as plt
 
 # System parameters
 m = 1.0   # Mass (kg)
-k = 10.0  # Spring constant (N/m)
-b = 2.0   # Damping coefficient (Ns/m)
+xdotnoise = 0.01
 
 # Simulation parameters
 dt_sim = 0.0001  # Simulation timestep (1 ms)
 dt_ctrl = 0.01  # Control update timestep (10 ms)
-t_final = 50.0   # Total simulation time
+t_final = 10.0   # Total simulation time
 
 # PD Controller gains
-Kp = 100.0  # Proportional gain
-Kd = 0.0     # Derivative gain
+Kp = 10  # Proportional gain
+Kd = 10     # Derivative gain
 
 # Initial conditions
 x0 = 1.0   
@@ -32,6 +31,9 @@ def get_control_input(t, x, xdot):
     global last_force, current_control_index
 
     if current_control_index < len(control_update_times) - 1:
+
+        xdot_with_noise = xdot + np.random.normal(0, xdotnoise, 1)[0]
+
         next_control_time = control_update_times[current_control_index + 1]
         if t >= next_control_time:
             # predict where x will be in half a sample of time
@@ -45,11 +47,12 @@ def get_control_input(t, x, xdot):
             # xdot += f2 * dt_sim
             # x += xdot * dt_sim
 
-            f1 = last_force/m # use estimated acceleration here? this would be super noisy
-            rk_xdot_predicted_in_half_step = xdot + f1*dt_ctrl/2
+            # f1 = last_force/(m) # use estimated acceleration here? this would be super noisy
+            f1 = 0 # use estimated acceleration here? this would be super noisy
+            rk_xdot_predicted_in_half_step = xdot_with_noise + f1*dt_ctrl/2
             rk_x = x + rk_xdot_predicted_in_half_step * dt_ctrl/2
             f2 = -Kp * rk_x - Kd * rk_xdot_predicted_in_half_step
-            xdot_pred = xdot + f2 * dt_ctrl
+            xdot_pred = xdot_with_noise + f2 * dt_ctrl
             x_pred = x + xdot_pred * dt_ctrl
 
             # Compute restoring force at control update time
