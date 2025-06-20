@@ -17,7 +17,8 @@ materials = [
     Material("PLA", 1.3, 2.35),  # https://www.matweb.com/search/QuickText.aspx?SearchText=PLA,
     Material("Alloy steel 4140", rho=7.85, E=210, YS=715),   # https://www.pcbway.com/rapid-prototyping/cnc-machining/
     Material("Mild Steel 1018", rho=7.87, E=205, YS=400), # https://www.pcbway.com/rapid-prototyping/cnc-machining/,
-    Material("Carbon Fiber Plate", rho=1.6, E=200)
+    Material("Carbon Fiber Plate", rho=1.6, E=200),
+    Material("Rigid 10k Resin", rho=1.63, E=11)
 ]
 
 # Constants
