@@ -44,5 +44,7 @@ if __name__ == "__main__":
             output_path = os.path.join(root, f"{file_root}.mov")
             cmd = f"ffmpeg -i {file_path} -c:v mpeg4 -q:v 1 -vf scale=in_range=pc:out_range=tv -c:a pcm_s16le {output_path} {'-y' if args.rewrite_existing else ''}"
             print(cmd)
+
+            # skip if path already exists UNLESS we specify to rewrite existing
             if os.path.exists(output_path) and not args.rewrite_existing: continue
             subprocess.call([f"ffmpeg -i {file_path} -c:v mpeg4 -q:v 1 -vf scale=in_range=pc:out_range=tv -c:a pcm_s16le {output_path} {'-y' if args.rewrite_existing else ''}"], shell=True)
